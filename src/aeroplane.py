@@ -16,11 +16,13 @@ class Aeroplane:
         """Валидация числовых данных (скорость, высота)."""
         try:
             float_val = float(value)
-            if float_val < 0:
-                raise ValueError(f"{field_name} не может быть отрицательной.")
-            return float_val
         except (ValueError, TypeError):
             raise ValueError(f"Некорректное значение для {field_name}.")
+
+        if float_val < 0:
+            raise ValueError(f"{field_name} не может быть отрицательной.")
+
+        return float_val
 
     @classmethod
     def cast_to_object_list(cls, api_data: List[List[Any]]) -> List['Aeroplane']:
@@ -39,7 +41,7 @@ class Aeroplane:
                 velocity = item[9] if item[9] is not None else 0.0
                 icao = item[0]
                 aeroplanes.append(cls(callsign, country, velocity, altitude, icao))
-            except (IndexError, ValueError) as e:
+            except (IndexError, ValueError):
                 continue  # Пропускаем поврежденные данные
         return aeroplanes
 
@@ -55,4 +57,5 @@ class Aeroplane:
         return self.baro_altitude < other.baro_altitude
 
     def __str__(self) -> str:
-        return f"Позывной: {self.callsign:10} | Страна: {self.origin_country:15} | Скорость: {self.velocity:7.2f} м/с | Высота: {self.baro_altitude:8.2f} м"
+        return (f"Позывной: {self.callsign:10} | Страна: {self.origin_country:15} | "
+                f"Скорость: {self.velocity:7.2f} м/с | Высота: {self.baro_altitude:8.2f} м")
