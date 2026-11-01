@@ -4,7 +4,14 @@ from typing import Any, List
 class Aeroplane:
     """Класс, описывающий самолет и его характеристики."""
 
-    def __init__(self, callsign: str, origin_country: str, velocity: float, baro_altitude: float, icao24: str = ""):
+    def __init__(
+        self,
+        callsign: str,
+        origin_country: str,
+        velocity: float,
+        baro_altitude: float,
+        icao24: str = "",
+    ):
         self.callsign = callsign.strip()
         self.origin_country = origin_country
         self.velocity = self._validate_number(velocity, "velocity")
@@ -25,7 +32,7 @@ class Aeroplane:
         return float_val
 
     @classmethod
-    def cast_to_object_list(cls, api_data: List[List[Any]]) -> List['Aeroplane']:
+    def cast_to_object_list(cls, api_data: List[List[Any]]) -> List["Aeroplane"]:
         """Преобразование сырых данных из OpenSky API в список объектов Aeroplane."""
         aeroplanes = []
         if not api_data:
@@ -45,17 +52,22 @@ class Aeroplane:
                 continue  # Пропускаем поврежденные данные
         return aeroplanes
 
-    def __eq__(self, other: 'Aeroplane') -> bool:
+    def __eq__(self, other: "Aeroplane") -> bool:
         if not isinstance(other, Aeroplane):
             return NotImplemented
-        return self.velocity == other.velocity and self.baro_altitude == other.baro_altitude
+        return (
+            self.velocity == other.velocity
+            and self.baro_altitude == other.baro_altitude
+        )
 
-    def __lt__(self, other: 'Aeroplane') -> bool:
+    def __lt__(self, other: "Aeroplane") -> bool:
         """Сравнение по высоте полета (по умолчанию для сортировки)."""
         if not isinstance(other, Aeroplane):
             return NotImplemented
         return self.baro_altitude < other.baro_altitude
 
     def __str__(self) -> str:
-        return (f"Позывной: {self.callsign:10} | Страна: {self.origin_country:15} | "
-                f"Скорость: {self.velocity:7.2f} м/с | Высота: {self.baro_altitude:8.2f} м")
+        return (
+            f"Позывной: {self.callsign:10} | Страна: {self.origin_country:15} | "
+            f"Скорость: {self.velocity:7.2f} м/с | Высота: {self.baro_altitude:8.2f} м"
+        )

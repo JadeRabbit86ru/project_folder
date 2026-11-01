@@ -1,7 +1,8 @@
-from abc import ABC, abstractmethod
 import json
 import os
-from typing import List, Optional, Dict, Any
+from abc import ABC, abstractmethod
+from typing import Any, Dict, List, Optional
+
 from src.aeroplane import Aeroplane
 
 
@@ -13,7 +14,9 @@ class AbstractStorage(ABC):
         pass
 
     @abstractmethod
-    def get_aeroplanes(self, criteria: Optional[Dict[str, Any]] = None) -> List[Aeroplane]:
+    def get_aeroplanes(
+        self, criteria: Optional[Dict[str, Any]] = None
+    ) -> List[Aeroplane]:
         pass
 
     @abstractmethod
@@ -47,18 +50,29 @@ class JSONSaver(AbstractStorage):
         data.append(aeroplane.__dict__)
         self._write_file(data)
 
-    def get_aeroplanes(self, criteria: Optional[Dict[str, Any]] = None) -> List[Aeroplane]:
+    def get_aeroplanes(
+        self, criteria: Optional[Dict[str, Any]] = None
+    ) -> List[Aeroplane]:
         data = self._read_file()
         result = []
         for item in data:
             if criteria:
-                match = all(str(item.get(k, "")).lower() == str(v).lower() for k, v in criteria.items())
+                match = all(
+                    str(item.get(k, "")).lower() == str(v).lower()
+                    for k, v in criteria.items()
+                )
                 if not match:
                     continue
             try:
                 result.append(
-                    Aeroplane(item["callsign"], item["origin_country"], item["velocity"], item["baro_altitude"],
-                              item.get("icao24", "")))
+                    Aeroplane(
+                        item["callsign"],
+                        item["origin_country"],
+                        item["velocity"],
+                        item["baro_altitude"],
+                        item.get("icao24", ""),
+                    )
+                )
             except KeyError:
                 continue
         return result
@@ -67,10 +81,14 @@ class JSONSaver(AbstractStorage):
         data = self._read_file()
         initial_len = len(data)
         # Удаляем по уникальному ключу (icao24 + callsign) или по всем атрибутам
-        data = [item for item in data if not (
-                item.get("icao24") == aeroplane.icao24 and
-                item.get("callsign") == aeroplane.callsign
-        )]
+        data = [
+            item
+            for item in data
+            if not (
+                item.get("icao24") == aeroplane.icao24
+                and item.get("callsign") == aeroplane.callsign
+            )
+        ]
         if len(data) < initial_len:
             self._write_file(data)
             return True

@@ -1,13 +1,16 @@
 from abc import ABC, abstractmethod
+from typing import Any, List, Optional, Tuple
+
 import requests
-from typing import Optional, List, Any, Dict, Tuple
 
 
 class AbstractAPI(ABC):
     """Абстрактный класс для работы с API."""
 
     @abstractmethod
-    def get_country_coordinates(self, country_name: str) -> Optional[Tuple[float, float, float, float]]:
+    def get_country_coordinates(
+        self, country_name: str
+    ) -> Optional[Tuple[float, float, float, float]]:
         """Получение boundingbox страны (юг, север, запад, восток)."""
         pass
 
@@ -25,10 +28,14 @@ class AeroplanesAPI(AbstractAPI):
         self.opensky_url = "https://opensky-network.org/api/states/all"
         self.headers = {"User-Agent": "AeroplaneTrackerCoursework/1.0"}
 
-    def get_country_coordinates(self, country_name: str) -> Optional[Tuple[float, float, float, float]]:
+    def get_country_coordinates(
+        self, country_name: str
+    ) -> Optional[Tuple[float, float, float, float]]:
         params = {"q": country_name, "format": "json", "limit": 1}
         try:
-            response = requests.get(self.nominatim_url, params=params, headers=self.headers, timeout=10)
+            response = requests.get(
+                self.nominatim_url, params=params, headers=self.headers, timeout=10
+            )
             response.raise_for_status()
             data = response.json()
             if not data:
@@ -49,12 +56,7 @@ class AeroplanesAPI(AbstractAPI):
             return []
 
         south, north, west, east = coords
-        params = {
-            "lamin": south,
-            "lomin": west,
-            "lamax": north,
-            "lomax": east
-        }
+        params = {"lamin": south, "lomin": west, "lamax": north, "lomax": east}
 
         try:
             response = requests.get(self.opensky_url, params=params, timeout=20)

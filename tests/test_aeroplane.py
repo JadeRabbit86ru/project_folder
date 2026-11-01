@@ -1,4 +1,5 @@
 import pytest
+
 from src.aeroplane import Aeroplane
 
 
@@ -30,8 +31,30 @@ def test_comparison():
 
 def test_cast_to_object_list():
     raw_data = [
-        ["icao1", "AAL123", "United States", 123, 123, 10.0, 20.0, 8000.0, False, 250.0],
-        ["icao2", "UAE45", "United Arab Emirates", 123, 123, 11.0, 21.0, 9000.0, False, 300.0]
+        [
+            "icao1",
+            "AAL123",
+            "United States",
+            123,
+            123,
+            10.0,
+            20.0,
+            8000.0,
+            False,
+            250.0,
+        ],
+        [
+            "icao2",
+            "UAE45",
+            "United Arab Emirates",
+            123,
+            123,
+            11.0,
+            21.0,
+            9000.0,
+            False,
+            300.0,
+        ],
     ]
     aeroplanes = Aeroplane.cast_to_object_list(raw_data)
     assert len(aeroplanes) == 2
